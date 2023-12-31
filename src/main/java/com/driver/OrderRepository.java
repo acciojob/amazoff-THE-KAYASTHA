@@ -2,14 +2,16 @@ package com.driver;
 
 import org.springframework.stereotype.Repository;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 @Repository
 public class OrderRepository {
     HashMap<String,Order> orderHashMap=new HashMap<>();
     HashMap<String,DeliveryPartner> deliveryPartnerHashMap=new HashMap<>();
 
-    HashMap<DeliveryPartner,Order> deliveryPartnerOrderHashMap=new HashMap<>();
+    HashMap<DeliveryPartner, List<Order>> deliveryPartnerOrderHashMap=new HashMap<>();
     public void addOrder(Order order){
 
         orderHashMap.put(order.getId(), order);
@@ -23,10 +25,16 @@ public class OrderRepository {
 
     public void addOrderPartnerPair(String orderId,String partnerId){
 
-        deliveryPartnerOrderHashMap.put(deliveryPartnerHashMap.get(partnerId),orderHashMap.get(orderId));
-       int temp= deliveryPartnerHashMap.get(partnerId).getNumberOfOrders();
-       deliveryPartnerHashMap.get(partnerId).setNumberOfOrders(temp+1);
+        if(deliveryPartnerOrderHashMap.containsKey(deliveryPartnerHashMap.get(partnerId))){
 
+            deliveryPartnerOrderHashMap.get(deliveryPartnerHashMap.get(partnerId)).add(orderHashMap.get(orderId));
+        }
+        else {
+            List<Order> temp=new ArrayList<>();
+            temp.add(orderHashMap.get(orderId));
+
+             deliveryPartnerOrderHashMap.put(deliveryPartnerHashMap.get(partnerId),temp);
+        }
 
 
     }
@@ -40,10 +48,53 @@ public class OrderRepository {
     public DeliveryPartner getPartnerById(String partnerId){
         return deliveryPartnerHashMap.get(partnerId);
     }
-    public Integer getOrderCountByPartnerId(String partnerId){
+    public List<Order> getOrderCountByPartnerId(String partnerId){
 
-        return deliveryPartnerHashMap.get(partnerId).getNumberOfOrders();
+            return deliveryPartnerOrderHashMap.get(deliveryPartnerHashMap.get(partnerId));
 
     }
 
+    public List<Order> getOrdersByPartnerId(String partnerId) {
+
+        return deliveryPartnerOrderHashMap.get(deliveryPartnerHashMap.get(partnerId));
+    }
+
+    public HashMap<String, Order> getAllOrders() {
+
+        return orderHashMap;
+    }
+
+    public HashMap<DeliveryPartner, List<Order>> getAssignedOrder() {
+        return deliveryPartnerOrderHashMap;
+    }
+
+    public List<Order> getOrdersLeftAfterGivenTimeByPartnerId(String partnerId) {
+        return deliveryPartnerOrderHashMap.get(deliveryPartnerHashMap.get(partnerId));
+    }
+
+    public List<Order> getLastDeliveryTimeByPartnerId(String partnerId) {
+        return deliveryPartnerOrderHashMap.get(deliveryPartnerHashMap.get(partnerId));
+    }
+
+    public void deletePartnerById(String partnerId) {
+        deliveryPartnerOrderHashMap.remove(deliveryPartnerHashMap.get(partnerId));
+        deliveryPartnerHashMap.remove(partnerId);
+    }
+
+    public void deleteOrderById(String orderId) {
+
+    Order temp=orderHashMap.get(orderId);
+
+    for(DeliveryPartner i:deliveryPartnerOrderHashMap.keySet()){
+
+        List<Order> ll=deliveryPartnerOrderHashMap.get(i);
+        if(ll.contains(temp)){
+            ll.remove(temp);
+        }
+
+    }
+        orderHashMap.remove(orderId);
+
+
+    }
 }
