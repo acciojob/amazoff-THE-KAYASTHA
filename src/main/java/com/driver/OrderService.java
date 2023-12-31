@@ -101,7 +101,7 @@ public class OrderService {
 
     public String getLastDeliveryTimeByPartnerId(String partnerId) {
         List<Order> temp=repoObj.getLastDeliveryTimeByPartnerId(partnerId);
-        Order last=temp.getLast();
+        Order last=temp.get(temp.size()-1);
         int lastDeliveryTime= last.getDeliveryTime();
 
 
