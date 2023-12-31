@@ -26,13 +26,13 @@ public class OrderRepository {
     public void addOrderPartnerPair(String orderId,String partnerId){
 
         if(deliveryPartnerOrderHashMap.containsKey(deliveryPartnerHashMap.get(partnerId))){
-
+            deliveryPartnerHashMap.get(partnerId).setNumberOfOrders(deliveryPartnerHashMap.get(partnerId).getNumberOfOrders()+1);
             deliveryPartnerOrderHashMap.get(deliveryPartnerHashMap.get(partnerId)).add(orderHashMap.get(orderId));
         }
         else {
             List<Order> temp=new ArrayList<>();
             temp.add(orderHashMap.get(orderId));
-
+            deliveryPartnerHashMap.get(partnerId).setNumberOfOrders(1);
              deliveryPartnerOrderHashMap.put(deliveryPartnerHashMap.get(partnerId),temp);
         }
 
@@ -85,10 +85,12 @@ public class OrderRepository {
 
     Order temp=orderHashMap.get(orderId);
 
+
     for(DeliveryPartner i:deliveryPartnerOrderHashMap.keySet()){
 
         List<Order> ll=deliveryPartnerOrderHashMap.get(i);
         if(ll.contains(temp)){
+            i.setNumberOfOrders(i.getNumberOfOrders()-1);
             ll.remove(temp);
         }
 

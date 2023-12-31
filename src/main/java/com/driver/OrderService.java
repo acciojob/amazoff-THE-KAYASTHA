@@ -21,6 +21,7 @@ public class OrderService {
         repoObj.addPartner(partnerId);
     }
     public void addOrderPartnerPair(String orderId,String partnerId){
+
         repoObj.addOrderPartnerPair(orderId,partnerId);
     }
     public Order getOrderById(String orderId){
@@ -89,7 +90,7 @@ public class OrderService {
         for(Order i:temp){
             int orderTime=i.getDeliveryTime();
 
-            if(currentTime>orderTime){
+            if(currentTime>=orderTime){
                 count++;
             }
 
@@ -100,15 +101,14 @@ public class OrderService {
 
     public String getLastDeliveryTimeByPartnerId(String partnerId) {
         List<Order> temp=repoObj.getLastDeliveryTimeByPartnerId(partnerId);
-        int lastDeliveryTime=Integer.MIN_VALUE;
-        for(Order i:temp){
-            if(i.getDeliveryTime()>lastDeliveryTime){
-                lastDeliveryTime=i.getDeliveryTime();
-            }
-        }
+        Order last=temp.getLast();
+        int lastDeliveryTime= last.getDeliveryTime();
+
+
         String ans="";
         int HH=lastDeliveryTime/60;
         int MM=lastDeliveryTime%60;
+
         return HH+":"+MM;
 
     }
