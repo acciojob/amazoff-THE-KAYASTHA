@@ -79,33 +79,37 @@ public class OrderService {
         return s1-s2;
     }
 
-    public Integer getOrdersLeftAfterGivenTimeByPartnerId(String time, String partnerId) {
-        List<Order> temp=repoObj.getOrdersLeftAfterGivenTimeByPartnerId(partnerId);
-        String[] timeComponents = time.split(":");
+    public Integer getOrdersLeftAfterGivenTimeByPartnerId(String givenTime, String partnerId) {
+        List<Order> partnerOrders=repoObj.getOrdersLeftAfterGivenTimeByPartnerId(partnerId);
+        String[] timeComponents = givenTime.split(":");
         int HH = Integer.parseInt(timeComponents[0]);
         int MM = Integer.parseInt(timeComponents[1]);
         Integer count=0;
         int currentTime=HH*60+MM;
-
-        for(Order i:temp){
-            int orderTime=i.getDeliveryTime();
-
-            if(currentTime>=orderTime){
-                count++;
+        if (partnerOrders != null) {
+            for (Order order : partnerOrders) {
+                if (order.getDeliveryTime()  > currentTime) {
+                    count++;
+                }
             }
-
         }
+
+
+
         return count;
 
     }
 
     public String getLastDeliveryTimeByPartnerId(String partnerId) {
-        List<Order> temp=repoObj.getLastDeliveryTimeByPartnerId(partnerId);
-        Order last=temp.get(temp.size()-1);
-        int lastDeliveryTime= last.getDeliveryTime();
+        List<Order> partnerOrders=repoObj.getLastDeliveryTimeByPartnerId(partnerId);
+        int lastDeliveryTime=0;
+        if (partnerOrders != null && !partnerOrders.isEmpty()) {
+            lastDeliveryTime = partnerOrders.get(partnerOrders.size() - 1).getDeliveryTime();
+        }
 
 
-        String ans="";
+
+
         int HH=lastDeliveryTime/60;
         int MM=lastDeliveryTime%60;
 
