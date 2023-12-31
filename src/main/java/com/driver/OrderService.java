@@ -108,12 +108,25 @@ public class OrderService {
         }
 
 
-
+        String ans="";
 
         int HH=lastDeliveryTime/60;
-        int MM=lastDeliveryTime%60;
+        if(HH<10){
+            ans+="0"+HH;
+        }
+        else{
+            ans+=HH;
+        }
 
-        return HH+":"+MM;
+        ans+=":";
+        int MM=lastDeliveryTime%60;
+            if(MM<10){
+                ans+="0"+MM;
+            }
+            else{
+                ans+=MM;
+            }
+        return ans;
 
     }
 
